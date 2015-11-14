@@ -33,6 +33,7 @@ for line in input_y:
 
     if last_header[0] != header[0] or last_header[1] != header[1]:
         mat[last_idx][49] += 1
+        last_header = ["", ""]
         last_idx = 0
 
     idx = type_table.index(token)
@@ -44,6 +45,7 @@ for line in input_y:
 mat[last_idx][49] += 1
 
 output_trans = open(output_trans_file, 'w')
-for i in range(49):
-    for j in range(49):
+for i in range(50):
+    for j in range(50):
         output_trans.write("%s %s %d\n" % (type_table[i], type_table[j], int(mat[i][j])))
+print(mat.sum())
