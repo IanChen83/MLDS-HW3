@@ -55,3 +55,8 @@ docs/_build/
 
 # PyBuilder
 target/
+
+48_39.map
+test_x.txt
+train_x.txt
+train_y.txt
