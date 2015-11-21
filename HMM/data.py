@@ -1,12 +1,13 @@
 type_table = [line.split()[0] for line in open("48_39.map", 'r')]
+type_convert = [line.split()[0] for line in open("48_idx_char.map", 'r')]
 
-def load_sentences(data_path):
+def load_sequences(data_path):
     """
         Input   :Path to the file containing n x (1 x 49) vectors
         Output  :Array of sequences (n x s x 48)
                 [
                     [[0.111, 0.222121, 0.2...], [0.145, 0.3453, 0.245...], ...],
-                    [[0.141, 0.1223541, 0.3...], [0.5, 0.2343, 0.2445...], ...]
+                    [[0.141, 0.1223541, 0.3...], [0.5, 0.2343, 0.2445...], ...],
                     ...
                 ]
     """
@@ -46,7 +47,7 @@ def load_answers(data_path):
     i = -1
     pre = ""
     cen = ""
-    _n = len(x)
+    _n = len(y)
     ret = []
     for s in range(_n):
         ans_line = y[s]
@@ -65,7 +66,7 @@ def load_answers(data_path):
 
 def trimming(data):
     """
-        Input   :Array of sentences (n x 48)
+        Input   :Array of sentences (n x s)
                 [
                     [sil, sil, sil...],
                     [sil, aa, aa...],
@@ -78,7 +79,6 @@ def trimming(data):
                     ...
                 ]
     """
-    type_convert = [line.split()[0] for line in open("48_idx_char.map", 'r')]
     def conversion(phoneme):
         m = type_convert.index(phoneme)
         return m + 97 if m < 26 else m + 39
@@ -104,7 +104,6 @@ def trimming_3(data):
     """
         The same as trimming(data) except that only 3-in-a-row phonemes will remain
     """
-    type_convert = [line.split()[0] for line in open("48_idx_char.map", 'r')]
     def conversion(phoneme):
         m = type_convert.index(phoneme)
         return m + 97 if m < 26 else m + 39
@@ -148,3 +147,24 @@ def convert_48_to_39(data):
         for i in sentence:
             i = conversion(i)
     return data
+
+def get_answer_from_seq(data):
+    """
+        Input   :Training output (n x s x 48)
+                [
+                    [[0.111, 0.222121, 0.2...], [0.145, 0.3453, 0.245...], ...],
+                    [[0.141, 0.1223541, 0.3...], [0.5, 0.2343, 0.2445...], ...],
+                    ...
+                ]
+        Output  :Array of sentences (n x s)
+                [
+                    [sil, sil, sil...],
+                    [sil, aa, aa...],
+                    ...
+                ]
+
+    """
+    ret = []
+    for seq in data:
+        ret.append([type_table[pho.index(max(pho))] for pho in seq])
+    return ret
