@@ -1,14 +1,9 @@
 import numpy
 import theano
 
-input_observed_file = "train_y.txt"
-input_emission_file = "train_x.txt"
 input_transition_file = "count.map"
-input_type_file = "48_39.map"
 
-input_emission = open(input_emission_file, 'r')
 input_transition = open(input_transition_file, 'r')
-input_type = open(input_type_file, 'r')
 
 input_observed = []
 input_emission = []
