@@ -46,7 +46,7 @@ def load_answers(data_path):
     i = -1
     pre = ""
     cen = ""
-    _n = len(y)
+    _n = len(x)
     ret = []
     for s in range(_n):
         ans_line = y[s]
@@ -61,7 +61,7 @@ def load_answers(data_path):
             ret.append([])
             i += 1
             ret[i].append(type_table.index(_11[1]))
-
+    return ret
 
 def trimming(data):
     """
@@ -78,7 +78,7 @@ def trimming(data):
                     ...
                 ]
     """
-    type_convert = [line.split()[0] for line in open("38_idx_char.map", 'r')]
+    type_convert = [line.split()[0] for line in open("48_idx_char.map", 'r')]
     def conversion(phoneme):
         m = type_convert.index(phoneme)
         return m + 97 if m < 26 else m + 39
