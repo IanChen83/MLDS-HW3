@@ -112,7 +112,7 @@ def trim_3(data):
     for sentence in data:
         x = []
         counter = 0
-        last = None
+        last = sentence[0]
         for i in sentence:
             if i == last:
                 counter += 1
