@@ -64,7 +64,7 @@ def load_answers(data_path):
             ret[i].append(type_table.index(_11[1]))
     return ret
 
-def trimming(data):
+def trim(data):
     """
         Input   :Array of sentences (n x s)
                 [
@@ -81,7 +81,7 @@ def trimming(data):
     """
     def conversion(phoneme):
         m = type_convert.index(phoneme)
-        return m + 97 if m < 26 else m + 39
+        return chr(m + 97) if m < 26 else chr(m + 39)
 
     ret = []
     for sentence in data:
@@ -100,13 +100,13 @@ def trimming(data):
 
     return ret
 
-def trimming_3(data):
+def trim_3(data):
     """
         The same as trimming(data) except that only 3-in-a-row phonemes will remain
     """
     def conversion(phoneme):
         m = type_convert.index(phoneme)
-        return m + 97 if m < 26 else m + 39
+        return chr(m + 97) if m < 26 else chr(m + 39)
 
     ret = []
     for sentence in data:
