@@ -1,5 +1,11 @@
 #include "data.h"
 
+std::map<string,int> TypeTableFunctor::stringMap48_Int;
+std::map<string,string> TypeTableFunctor::stringMap48_39;
+string TypeTableFunctor::table39[48];
+string TypeTableFunctor::table48[48];
+
+TypeTableFunctor TypeTable("HMM/48_39.map");
 
 /****************** LoadSequences *************************
  * Input:
@@ -48,7 +54,7 @@ void LoadSequences(Sequences& seqs, const char* path){
             // New sequence
             seq = new Sequence;
             seq->name.assign(name);
-            seqs.push_back(seq);
+            seqs.insert(SequencePair(seq->name,seq));
             seq->head = seq->end = pho;
         }
 
@@ -57,8 +63,64 @@ void LoadSequences(Sequences& seqs, const char* path){
     printf("Read %d line(s) from '%s'\n", line_count, path);
 }
 
-int main(){
-    Sequences seqs;
-    LoadSequences(seqs,"dnn_softmax_sub.ark");
-    cout << seqs[1]->name << endl;
+void LoadAnswers(Sequences& seqs, const char* path){
+    ifstream file(path);
+    int line_count = 0;
+    char line[25];
+    Sequence* seq = 0;
+    Phoneme* pho = 0;
+
+    for(;file.getline(line, 25);){
+        ++line_count;
+
+        // Deal with name
+        char* name = strtok(line, ",");
+        char* tok = strtok(NULL, ",");
+        char* start = strchr(name, '_');
+        char* end = strchr(start + 1, '_');
+        end[0] = '\0';
+
+        if(seq != 0 && seq->name.compare(name) == 0){
+            // Same sequence, load token into the phoneme
+            if(pho == 0)
+                pho = seq->head;
+            pho->ans = TypeTable(tok);
+            pho = pho->next;
+        }else{
+            seq = seqs[name];
+            pho = seq->head;
+            pho->ans = TypeTable(tok);
+            pho = pho->next;
+        }
+
+        memset(line, 0, 25);
+    }
+    printf("Read %d line(s) from '%s'\n", line_count, path);
 }
+
+/****************** Example Usage *************************
+
+int main(){
+    // Define a Sequences to load data
+    Sequences seqs;
+
+    // Load Sequences FIRST
+    LoadSequences(seqs,"dnn_softmax_sub.ark");
+
+    // Load Answers SUBSEQUENTLY
+    LoadAnswers(seqs,"answer_map_sub.txt");
+
+    // To iterate throught ALL the sequences
+    for(auto it = seqs.begin(); it != seqs.end(); ++it){
+        auto pho = it->second->head;
+        for(;pho != 0;pho = pho->next){
+            cout << TypeTable(pho->ans) << '\t';
+        }
+        cout << endl;
+    }
+
+    // If you just want to load one sequence, 'aem0_si1392' for example
+    auto seq = seqs["faem0_si1392"]
+    cout << TypeTable(seq->head->ans) << endl;
+}
+**********************************************************/
