@@ -11,8 +11,24 @@ mat = numpy.zeros((50, 50))
 ans = load_answers("answer_map.txt")
 
 for seq in ans:
-    last = 0
+    # Exclude 'sil'
+    start = 0
     for i in seq:
+        if i == 36:    # sil
+            start += 1
+            continue
+        else:
+            break
+    end = len(seq)
+    for i in reversed(seq):
+        if i == 36:    # sil
+            end -= 1
+            continue
+        else:
+            break
+
+    last = 0
+    for i in seq[start:end]:
         mat[last][i + 1] += 1
         last = i + 1
     mat[last][49] += 1
