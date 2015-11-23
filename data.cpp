@@ -1,15 +1,22 @@
 #include "data.h"
 
+
+/****************** LoadSequences *************************
+ * Input:
+ *      Sequences&      : Pass by reference that store all sequences
+ *      const char*     : The path to the file containing  Data (N x (1 + 48)) lines
+ * */
 void LoadSequences(Sequences& seqs, const char* path){
     ifstream file(path);
+    int line_count = 0;
     char line[900];
-    char* last = new char[1];
-    char* de = last;
-    Sequence* x = new Sequence;
-    Phoneme* pho = new Phoneme;
-    x->head = x->end = pho;
+    Sequence* seq = 0;          // Current sequence
+    Phoneme* pho = 0;           // Current phoneme
 
     for(;file.getline(line, 900);){
+        ++line_count;
+        pho = new Phoneme;
+
         // Deal with name
         char* name = strtok(line, " ");
         char* start = strchr(name, '_');
@@ -20,6 +27,8 @@ void LoadSequences(Sequences& seqs, const char* path){
         for(int i = 1;i < 49;++i){
             pho->value[i-1] = atof(strtok(NULL, " "));
         }
+
+        // Find max and store the tag
         float temp = 0;
         int j = 0;
         for(int i = 0;i < 48; ++i){
@@ -30,27 +39,26 @@ void LoadSequences(Sequences& seqs, const char* path){
         }
         pho->tag = j;
 
-        if(strcmp(last, name) != 0){    // Same sequence
-            pho->prev = x->end;
-            x->end->next = pho;
-            x->end = pho;
-            pho = new Phoneme;
-            continue;
-        }else{                          // new sequence
-            seqs.push_back(x);
-            x = new Sequence;
-            x->head = x->end = pho;
-            pho = new Phoneme;
-            continue;
+        if(seq != 0 && seq->name.compare(name) == 0){
+            // Same sequence, append phoneme to the same sequence
+            pho->prev = seq->end;
+            seq->end->next = pho;
+            seq->end = pho;
+        }else{
+            // New sequence
+            seq = new Sequence;
+            seq->name.assign(name);
+            seqs.push_back(seq);
+            seq->head = seq->end = pho;
         }
 
         memset(line, 0, 900);
     }
-    delete pho;
-    delete de;
+    printf("Read %d line(s) from '%s'\n", line_count, path);
 }
 
 int main(){
     Sequences seqs;
-    LoadSequences(seqs,"train_x.txt");
+    LoadSequences(seqs,"dnn_softmax_sub.ark");
+    cout << seqs[1]->name << endl;
 }
