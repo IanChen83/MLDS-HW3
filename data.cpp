@@ -12,7 +12,8 @@ TypeTableFunctor TypeTable("HMM/48_39.map");
  *      Sequences&      : Pass by reference that store all sequences
  *      const char*     : The path to the file containing  Data (N x (1 + 48)) lines
  * */
-void LoadSequences(Sequences& seqs, const char* path){
+void
+LoadSequences(Sequences& seqs, const char* path){
     ifstream file(path);
     int line_count = 0;
     char line[900];
@@ -63,7 +64,8 @@ void LoadSequences(Sequences& seqs, const char* path){
     printf("Read %d line(s) from '%s'\n", line_count, path);
 }
 
-void LoadAnswers(Sequences& seqs, const char* path){
+void
+LoadAnswers(Sequences& seqs, const char* path){
     ifstream file(path);
     int line_count = 0;
     char line[25];
@@ -98,6 +100,44 @@ void LoadAnswers(Sequences& seqs, const char* path){
     printf("Read %d line(s) from '%s'\n", line_count, path);
 }
 
+void
+LoadCountMap(int start_map[], int my_map[][48], int end_map[], const char* path){
+    ifstream file(path);
+    char line[20];
+    char* first, *second;
+    char* count;
+    int a, b;
+    for(;file.getline(line, 20);){
+        first = strtok(line, " ");
+        second = strtok(NULL, " ");
+        count = strtok(NULL, " ");
+        if(first[0] == '^'){
+            if(second[0] == '^' || second[0] == '$'){
+            }else{
+                start_map[TypeTable(second)] = atoi(count);
+            }
+    }else if(first[0] == '$'){
+        }else{
+            if(second[0] == '^'){
+            }else if(second[0] == '$'){
+                end_map[TypeTable(first)] = atoi(count);
+            }else{
+                my_map[TypeTable(first)][TypeTable(second)] = atoi(count);
+            }
+        }
+        memset(line, 0, 20);
+    }
+}
+
+/****************** Example Usage *************************
+int main(){
+    int startTable[48];
+    int endTable[48];
+    int countTable[48][48];
+    LoadCountMap(startTable, countTable, endTable, "HMM/count.map");
+    return 0;
+}
+**********************************************************/
 /****************** Example Usage *************************
 
 int main(){

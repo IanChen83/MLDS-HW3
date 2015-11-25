@@ -28,6 +28,7 @@ typedef typename std::pair<string,Sequence*> SequencePair;
 
 void LoadSequences(Sequences&, const char*);
 void LoadAnswers(Sequences&, const char*);
+void LoadCountMap(int[], int[][48], int[], const char*);
 //char* trim(Answer&);
 //char* trim_3(Answer&);
 class TypeTableFunctor{
