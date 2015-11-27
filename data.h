@@ -10,17 +10,21 @@ using namespace std;
 class Phoneme{
 public:
     float value[48];
-    int tag;
-    int ans;
+    int tag = -1;
+    int ans = -1;
     Phoneme* prev = 0;
     Phoneme* next = 0;
+    int* backTrack[48];
 };
 
-struct Sequence{
+class Sequence{
+public:
     string name;
     char* result = 0;
     Phoneme* head = 0;
     Phoneme* end = 0;
+    int length;
+    int countError();
 };
 
 typedef typename std::map<string,Sequence*> Sequences;
@@ -29,6 +33,7 @@ typedef typename std::pair<string,Sequence*> SequencePair;
 void LoadSequences(Sequences&, const char*);
 void LoadAnswers(Sequences&, const char*);
 void LoadCountMap(int[], int[][48], int[], const char*);
+int CountError(Sequence&);
 //char* trim(Answer&);
 //char* trim_3(Answer&);
 class TypeTableFunctor{

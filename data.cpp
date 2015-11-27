@@ -51,14 +51,15 @@ LoadSequences(Sequences& seqs, const char* path){
             pho->prev = seq->end;
             seq->end->next = pho;
             seq->end = pho;
+            ++seq->length;
         }else{
             // New sequence
             seq = new Sequence;
             seq->name.assign(name);
             seqs.insert(SequencePair(seq->name,seq));
             seq->head = seq->end = pho;
+            seq->length = 1;
         }
-
         memset(line, 0, 900);
     }
     printf("Read %d line(s) from '%s'\n", line_count, path);
@@ -127,6 +128,27 @@ LoadCountMap(int start_map[], int my_map[][48], int end_map[], const char* path)
         }
         memset(line, 0, 20);
     }
+}
+int CountError(Sequences& seqs){
+    int error = 0;
+    for(auto it = seqs.begin(); it != seqs.end(); ++it){
+        error += it->second->countError();
+    }
+    return error;
+
+}
+/***************** Sequence member function *************/
+int
+Sequence::countError(){
+    int error = 0;
+    Phoneme* it = head;
+    while(it != 0){
+        if(it->tag != it->ans){
+            ++error;
+        }
+        it = it->next;
+    }
+    return error;
 }
 
 /****************** Example Usage *************************
