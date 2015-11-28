@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <iomanip>
 #include <cstring>
 #include <string>
 #include <cmath>
@@ -10,7 +11,7 @@ using namespace std;
 
 class Phoneme{
 public:
-    float value[48];
+    double value[48];
     int tag = -1;
     int ans = -1;
     Phoneme* prev = 0;
@@ -33,9 +34,11 @@ public:
 typedef typename std::map<string,Sequence*> Sequences;
 typedef typename std::pair<string,Sequence*> SequencePair;
 
+template<typename T, int a, int num> void inline print(T*);
+
 void LoadSequences(Sequences&, const char*);
 void LoadAnswers(Sequences&, const char*);
-void LoadCountMap(double[], double[][48], double[], double[], const char*);
+void LoadCountMap(double*, double**, double*, double*, const char*);
 int CountError(Sequence&);
 void CalculateTag(Sequences&);
 void OutputStream(Sequences&, ostream&);

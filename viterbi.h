@@ -1,7 +1,6 @@
 #ifndef VITERBI_HEADER
 #define VITERBI_HEADER
 #include <list>
-#include <iomanip>
 #include "data.h"
 
 template<typename T>
@@ -17,6 +16,5 @@ class value_idx{
 };
 
 template<typename T> value_idx<T> inline max(T*, int);
-template<typename T, int a, int num> void inline print(T*);
-template<int obv, int sta> list<int> viterbi(double**, double**, double*, double*);
+list<int> viterbi(int, int, double**, double**, double*, double*);
 #endif

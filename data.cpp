@@ -7,6 +7,16 @@ string TypeTableFunctor::table48[48];
 
 TypeTableFunctor TypeTable("HMM/48_39.map");
 
+template<typename T, int col_idx, int col_len>
+void inline print(T* v){
+    int e = (col_idx+1) * col_len;
+    for(int i = col_idx * col_len; i < e; ++i){
+        cout << std::setw(8) << v[i];
+        if(i % 20 == 0)
+            cout << endl;
+    }
+}
+
 /****************** LoadSequences *************************
  * Input:
  *      Sequences&      : Pass by reference that store all sequences
@@ -36,7 +46,7 @@ LoadSequences(Sequences& seqs, const char* path){
         }
 
         // Find max and store the tag
-        float temp = 0;
+        double temp = 0;
         int j = 0;
         for(int i = 0;i < 48; ++i){
             if(pho->value[i] > temp){
@@ -102,15 +112,13 @@ LoadAnswers(Sequences& seqs, const char* path){
 }
 
 void
-LoadCountMap(double start_map[], double my_map[][48], double end_map[], double count_total[], const char* path){
+LoadCountMap(double* start_map, double** my_map, double* end_map, double* count_total, const char* path){
     ifstream file(path);
-    long countTotal[48];
     char line[20];
     char* first, *second;
     char* count;
-    int a, b;
     for(int i = 0; i<48; ++i){
-        countTotal[i] = 0;
+        count_total[i] = 0;
     }
     for(;file.getline(line, 20);){
         first = strtok(line, " ");
@@ -119,31 +127,30 @@ LoadCountMap(double start_map[], double my_map[][48], double end_map[], double c
         if(first[0] == '^'){
             if(second[0] == '^' || second[0] == '$'){
             }else{
-                start_map[TypeTable(second)] = log(atoi(count));
+                start_map[TypeTable(second)] = double(atoi(count));
             }
     }else if(first[0] == '$'){
         }else{
             if(second[0] == '^'){
             }else if(second[0] == '$'){
                 int x = TypeTable(first);
-                int y = atoi(count);
-                end_map[x] = log(y);
-                countTotal[x] += y;
+                double y = double(atoi(count));
+                end_map[x] = y;
+                count_total[x] += y;
                 //cout << y << '\t';
             }else{
                 int x = TypeTable(first);
-                int y = atoi(count);
-                my_map[x][TypeTable(second)] = log(y);
-                countTotal[x] += y;
+                double y = double(atoi(count));
+                my_map[x][TypeTable(second)] = y;
+                count_total[x] += y;
                 //cout << y << '\t';
             }
         }
         memset(line, 0, 20);
     }
-    for(int i = 0; i<48; ++i){
-        count_total[i] = log(countTotal[i]);
-    }
 }
+
+// Count error by comparing tag and ans
 int
 CountError(Sequences& seqs){
     int error = 0;
@@ -153,12 +160,16 @@ CountError(Sequences& seqs){
     return error;
 
 }
+
+// Calculate tag for every phoneme in the seqs
 void
 CalculateTag(Sequences& seqs){
    for(auto it = seqs.begin(); it != seqs.end(); ++it){
        it->second->calculateTag();
    }
 }
+
+// Output the tag
 void
 OutputTag(Sequences& seqs, ostream& os){
     for(auto it = seqs.begin(); it != seqs.end(); ++it){
@@ -190,8 +201,8 @@ void
 Sequence::calculateTag(){
     Phoneme* it = head;
     while(it != head){
-        float* v = it->value;
-        float max = 0;
+        double* v = it->value;
+        double max = 0;
         int max_idx = 0;
         for(int i = 0; i < 48; ++i){
             if(v[i] > max){

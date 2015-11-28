@@ -38,22 +38,16 @@ value_idx<T> inline max(T* v, int total){
     return value_idx<T>(*x, idx);
 }
 
-template<typename T, int a, int num>
-void inline print(T* v){
-    int e = (a+1) * num;
-    for(int i = a * num; i < e; ++i){
-        cout << setw(8) << v[i];
-        if(i % 20 == 0)
-            cout << endl;
-    }
-}
 
-template<int obv, int sta>
 list<int>
-viterbi(double** em, double** tm, double* start, double* end){
+viterbi(int obv, int sta, double** em, double** tm, double* start, double* end){
     // Initialization
-    double Em[obv][sta];
-    double Tm[sta][sta];
+    double** Em = new double*[obv];
+    for(int i = 0; i < obv; ++i)
+        Em[i] = new double[sta];
+    double** Tm = new double*[sta];
+    for(int i = 0; i < sta; ++i)
+        Tm[i] = new double[sta];
     for(int i = 0; i < obv; ++i){
         for(int j = 0; j < sta; ++j){
             Em[i][j] = log(em[i][j]);
@@ -67,9 +61,13 @@ viterbi(double** em, double** tm, double* start, double* end){
         }
     }
 
-    double prob[obv][sta];
-    int backTrack[obv][sta];
-    double temp_prob[sta];
+    double** prob = new double*[obv];
+    int ** backTrack = new int*[obv];
+    for(int i = 0; i < obv; ++i){
+        prob[i] = new double[sta];
+        backTrack[i] = new int[sta];
+    }
+    double* temp_prob = new double[sta];
 
     // Head probability
     for(int i = 0; i < sta; ++i){
@@ -102,6 +100,21 @@ viterbi(double** em, double** tm, double* start, double* end){
         ret.push_front(index);
         index = backTrack[i][index];
     }
+
+    // Clean up
+    for(int i = 0; i < obv; ++i){
+        delete[] prob[i];
+        delete[] backTrack[i];
+        delete[] Em[i];
+    }
+    for(int i = 0; i < sta; ++i){
+        delete[] Tm[i];
+    }
+    delete[] Em;
+    delete[] Tm;
+    delete[] prob;
+    delete[] backTrack;
+    delete[] temp_prob;
     return ret;
 
 }
