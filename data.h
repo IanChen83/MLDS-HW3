@@ -5,6 +5,7 @@
 #include <map>
 #include <cstring>
 #include <string>
+#include <cmath>
 using namespace std;
 
 class Phoneme{
@@ -25,6 +26,8 @@ public:
     Phoneme* end = 0;
     int length;
     int countError();
+    void calculateTag();
+    void outputTag(ostream&);
 };
 
 typedef typename std::map<string,Sequence*> Sequences;
@@ -32,8 +35,10 @@ typedef typename std::pair<string,Sequence*> SequencePair;
 
 void LoadSequences(Sequences&, const char*);
 void LoadAnswers(Sequences&, const char*);
-void LoadCountMap(int[], int[][48], int[], const char*);
+void LoadCountMap(double[], double[][48], double[], double[], const char*);
 int CountError(Sequence&);
+void CalculateTag(Sequences&);
+void OutputStream(Sequences&, ostream&);
 //char* trim(Answer&);
 //char* trim_3(Answer&);
 class TypeTableFunctor{

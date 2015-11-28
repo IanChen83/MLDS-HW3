@@ -102,12 +102,16 @@ LoadAnswers(Sequences& seqs, const char* path){
 }
 
 void
-LoadCountMap(int start_map[], int my_map[][48], int end_map[], const char* path){
+LoadCountMap(double start_map[], double my_map[][48], double end_map[], double count_total[], const char* path){
     ifstream file(path);
+    long countTotal[48];
     char line[20];
     char* first, *second;
     char* count;
     int a, b;
+    for(int i = 0; i<48; ++i){
+        countTotal[i] = 0;
+    }
     for(;file.getline(line, 20);){
         first = strtok(line, " ");
         second = strtok(NULL, " ");
@@ -115,27 +119,51 @@ LoadCountMap(int start_map[], int my_map[][48], int end_map[], const char* path)
         if(first[0] == '^'){
             if(second[0] == '^' || second[0] == '$'){
             }else{
-                start_map[TypeTable(second)] = atoi(count);
+                start_map[TypeTable(second)] = log(atoi(count));
             }
     }else if(first[0] == '$'){
         }else{
             if(second[0] == '^'){
             }else if(second[0] == '$'){
-                end_map[TypeTable(first)] = atoi(count);
+                int x = TypeTable(first);
+                int y = atoi(count);
+                end_map[x] = log(y);
+                countTotal[x] += y;
+                //cout << y << '\t';
             }else{
-                my_map[TypeTable(first)][TypeTable(second)] = atoi(count);
+                int x = TypeTable(first);
+                int y = atoi(count);
+                my_map[x][TypeTable(second)] = log(y);
+                countTotal[x] += y;
+                //cout << y << '\t';
             }
         }
         memset(line, 0, 20);
     }
+    for(int i = 0; i<48; ++i){
+        count_total[i] = log(countTotal[i]);
+    }
 }
-int CountError(Sequences& seqs){
+int
+CountError(Sequences& seqs){
     int error = 0;
     for(auto it = seqs.begin(); it != seqs.end(); ++it){
         error += it->second->countError();
     }
     return error;
 
+}
+void
+CalculateTag(Sequences& seqs){
+   for(auto it = seqs.begin(); it != seqs.end(); ++it){
+       it->second->calculateTag();
+   }
+}
+void
+OutputTag(Sequences& seqs, ostream& os){
+    for(auto it = seqs.begin(); it != seqs.end(); ++it){
+        it->second->outputTag(os);
+    }
 }
 /***************** Sequence member function *************/
 int
@@ -150,7 +178,31 @@ Sequence::countError(){
     }
     return error;
 }
-
+void
+Sequence::outputTag(ostream& os){
+    Phoneme* it = head;
+    while(it != 0){
+        os << name << ',' << TypeTable(it->tag) << endl;
+        it = it->next;
+    }
+}
+void
+Sequence::calculateTag(){
+    Phoneme* it = head;
+    while(it != head){
+        float* v = it->value;
+        float max = 0;
+        int max_idx = 0;
+        for(int i = 0; i < 48; ++i){
+            if(v[i] > max){
+                max = v[i];
+                max_idx = i;
+            }
+        }
+        it->tag = max_idx;
+        it = it->next;
+    }
+}
 /****************** Example Usage *************************
 int main(){
     int startTable[48];
