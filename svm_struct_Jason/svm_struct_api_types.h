@@ -22,6 +22,7 @@
 
 # include "svm_light/svm_common.h"
 # include "svm_light/svm_learn.h"
+#include <stdlib.h>
 
 # define INST_NAME          "Generic and empty API"
 # define INST_VERSION       "V0.00"
@@ -104,7 +105,8 @@ typedef struct struct_learn_parm {
           functions via -l command line
           option */
   /* further parameters that are passed to init_struct_model() */
-  int add_your_variables_here;
+  int start_probability[48];
+  int end_probability[48];
 } STRUCT_LEARN_PARM;
 
 typedef struct struct_test_stats {
