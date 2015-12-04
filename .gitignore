@@ -60,5 +60,5 @@ test_x.txt
 train_x.txt
 train_y.txt
 rnn_softmax.txt
-SVM/data
-svm_struct_Jason/data
+SVM/data/
+svm_struct_Jason/data/
