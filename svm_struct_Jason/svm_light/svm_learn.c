@@ -20,6 +20,7 @@
 # include "svm_common.h"
 # include "svm_learn.h"
 
+
 #define MAX(x,y)      ((x) < (y) ? (y) : (x))
 #define MIN(x,y)      ((x) > (y) ? (y) : (x))
 #define SIGN(x)       ((x) > (0) ? (1) : (((x) < (0) ? (-1) : (0))))

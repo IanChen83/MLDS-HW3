@@ -14,6 +14,10 @@ LDFLAGS =  $(SFLAGS) -O3 -lm -Wall -g
 
 all: svm_empty_learn svm_empty_classify
 
+run: all
+	./svm_empty_classify data model output.kaggle
+
+
 .PHONY: clean
 clean: svm_light_clean svm_struct_clean
 	rm -f *.o *.tcov *.d core gmon.out *.stackdump 
@@ -42,18 +46,18 @@ svm_struct_clean:
 #----  SVM empty API  ----#
 #-------------------------#
 
-svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe svm_struct_api.o svm_struct/svm_struct_classify.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o viterbi.o
-	$(LD) $(LDFLAGS) svm_struct_api.o svm_struct/svm_struct_classify.o svm_light/svm_common.o svm_struct/svm_struct_common.o viterbi.o -o svm_empty_classify $(LIBS)
+svm_empty_classify: svm_light_hideo_noexe svm_struct_noexe svm_struct_api.o svm_struct/svm_struct_classify.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o 
+	$(LD) $(LDFLAGS) svm_struct_api.o svm_struct/svm_struct_classify.o svm_light/svm_common.o svm_struct/svm_struct_common.o  -o svm_empty_classify $(LIBS)
 
-svm_empty_learn: svm_light_hideo_noexe svm_struct_noexe svm_struct_api.o svm_struct_learn_custom.o svm_struct/svm_struct_learn.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o viterbi.o
-	$(LD) $(LDFLAGS) svm_struct/svm_struct_learn.o svm_struct_learn_custom.o svm_struct_api.o svm_light/svm_hideo.o svm_light/svm_learn.o svm_light/svm_common.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o viterbi.o -o svm_empty_learn $(LIBS)
+svm_empty_learn: svm_light_hideo_noexe svm_struct_noexe svm_struct_api.o svm_struct_learn_custom.o svm_struct/svm_struct_learn.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o 
+	$(LD) $(LDFLAGS) svm_struct/svm_struct_learn.o svm_struct_learn_custom.o svm_struct_api.o svm_light/svm_hideo.o svm_light/svm_learn.o svm_light/svm_common.o svm_struct/svm_struct_common.o svm_struct/svm_struct_main.o  -o svm_empty_learn $(LIBS)
 
 
-svm_struct_api.o: svm_struct_api.cpp svm_struct_api.h svm_struct_api_types.h svm_struct/svm_struct_common.h ../viterbi.h
-	$(CC) -c $(CFLAGS) svm_struct_api.cpp -o svm_struct_api.o
+svm_struct_api.o: svm_struct_api.c svm_struct_api.h svm_struct_api_types.h svm_struct/svm_struct_common.h viterbi.h svm_light/svm_learn.h
+	$(CC) -c $(CFLAGS) svm_struct_api.c -o svm_struct_api.o
 
 svm_struct_learn_custom.o: svm_struct_learn_custom.c svm_struct_api.h svm_light/svm_common.h svm_struct_api_types.h svm_struct/svm_struct_common.h
 	$(CC) -c $(CFLAGS) svm_struct_learn_custom.c -o svm_struct_learn_custom.o
 
-viterbi.o: ../viterbi.h ../viterbi.cpp
-	$(CC) -c $(CFLAGS) ../viterbi.cpp -o viterbi.o
+#viterbi.o: viterbi.h viterbi.cpp
+#	$(CC) -c $(CFLAGS) viterbi.cpp -o viterbi.o

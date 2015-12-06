@@ -11,8 +11,8 @@ LD = g++
 #Uncomment the following line to make CYGWIN produce stand-alone Windows executables
 #SFLAGS= -mno-cygwin
 
-CFLAGS=  $(SFLAGS) -O3 -std=c++11 -g                   # release C-Compiler flags
-LFLAGS=  $(SFLAGS) -O3                     # release linker flags
+CFLAGS=  $(SFLAGS) -O3                  # release C-Compiler flags
+LFLAGS=  $(SFLAGS) -O3 -lm -L.                  # release linker flags
 #CFLAGS= $(SFLAGS) -pg -Wall -pedantic      # debugging C-Compiler flags
 #LFLAGS= $(SFLAGS) -pg                      # debugging linker flags
 LIBS=-L. -lm                               # used libraries
